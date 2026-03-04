@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Modifier' if vehicle else 'Nouveau' }} véhicule — AmbuTrack{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-truck"></i> {{ 'Modifier le véhicule' if vehicle else 'Nouveau véhicule' }}</h2>
+    <a href="{{ url_for('vehicles.list_vehicles') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+
+<form method="post">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Immatriculation *</label>
+            <input type="text" name="registration_plate" class="form-control" value="{{ vehicle.registration_plate if vehicle else '' }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Type de véhicule *</label>
+            <select name="vehicle_type" class="form-select" required>
+                <option value="taxi" {{ 'selected' if vehicle and vehicle.vehicle_type == 'taxi' else '' }}>Taxi</option>
+                <option value="vsl" {{ 'selected' if vehicle and vehicle.vehicle_type == 'vsl' else '' }}>VSL</option>
+                <option value="ambulance" {{ 'selected' if vehicle and vehicle.vehicle_type == 'ambulance' else '' }}>Ambulance</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Statut</label>
+            <select name="status" class="form-select">
+                <option value="available" {{ 'selected' if not vehicle or vehicle.status == 'available' else '' }}>Disponible</option>
+                <option value="in_use" {{ 'selected' if vehicle and vehicle.status == 'in_use' else '' }}>En service</option>
+                <option value="maintenance" {{ 'selected' if vehicle and vehicle.status == 'maintenance' else '' }}>En maintenance</option>
+                <option value="out_of_service" {{ 'selected' if vehicle and vehicle.status == 'out_of_service' else '' }}>Hors service</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Marque</label>
+            <input type="text" name="brand" class="form-control" value="{{ vehicle.brand if vehicle else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Modèle</label>
+            <input type="text" name="model" class="form-control" value="{{ vehicle.model if vehicle else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Année</label>
+            <input type="number" name="year" class="form-control" value="{{ vehicle.year if vehicle else '' }}" min="1990" max="2030">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Kilométrage</label>
+            <input type="number" name="mileage" class="form-control" value="{{ vehicle.mileage if vehicle else 0 }}" min="0">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">N° Assurance</label>
+            <input type="text" name="insurance_number" class="form-control" value="{{ vehicle.insurance_number if vehicle else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Expiration assurance</label>
+            <input type="date" name="insurance_expiry" class="form-control" value="{{ vehicle.insurance_expiry.isoformat() if vehicle and vehicle.insurance_expiry else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Date CT</label>
+            <input type="date" name="technical_control_date" class="form-control" value="{{ vehicle.technical_control_date.isoformat() if vehicle and vehicle.technical_control_date else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Expiration CT</label>
+            <input type="date" name="technical_control_expiry" class="form-control" value="{{ vehicle.technical_control_expiry.isoformat() if vehicle and vehicle.technical_control_expiry else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Dernière révision</label>
+            <input type="date" name="last_maintenance_date" class="form-control" value="{{ vehicle.last_maintenance_date.isoformat() if vehicle and vehicle.last_maintenance_date else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Prochaine révision</label>
+            <input type="date" name="next_maintenance_date" class="form-control" value="{{ vehicle.next_maintenance_date.isoformat() if vehicle and vehicle.next_maintenance_date else '' }}">
+        </div>
+        <div class="col-12">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control" rows="2">{{ vehicle.notes if vehicle else '' }}</textarea>
+        </div>
+    </div>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Enregistrer</button>
+        <a href="{{ url_for('vehicles.list_vehicles') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+    </div>
+</form>
+{% endblock %}

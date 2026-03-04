@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Véhicules — AmbuTrack{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-truck"></i> Véhicules</h2>
+    <a href="{{ url_for('vehicles.new_vehicle') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nouveau véhicule
+    </a>
+</div>
+
+{% if vehicles %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Immatriculation</th>
+                <th>Type</th>
+                <th>Marque / Modèle</th>
+                <th>Kilométrage</th>
+                <th>Assurance (expiry)</th>
+                <th>CT (expiry)</th>
+                <th>Prochaine révision</th>
+                <th>Statut</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for v in vehicles %}
+        <tr>
+            <td><strong>{{ v.registration_plate }}</strong></td>
+            <td>
+                <span class="badge bg-{{ 'danger' if v.vehicle_type == 'ambulance' else ('info' if v.vehicle_type == 'vsl' else 'secondary') }}">
+                    {{ v.vehicle_type|upper }}
+                </span>
+            </td>
+            <td>{{ (v.brand or '') ~ ' ' ~ (v.model or '') }}</td>
+            <td>{{ '{:,}'.format(v.mileage) }} km</td>
+            <td>{{ v.insurance_expiry.strftime('%d/%m/%Y') if v.insurance_expiry else '—' }}</td>
+            <td>{{ v.technical_control_expiry.strftime('%d/%m/%Y') if v.technical_control_expiry else '—' }}</td>
+            <td>{{ v.next_maintenance_date.strftime('%d/%m/%Y') if v.next_maintenance_date else '—' }}</td>
+            <td>
+                <span class="badge bg-{{ 'success' if v.status == 'available' else ('warning text-dark' if v.status == 'in_use' else 'secondary') }}">
+                    {{ v.status }}
+                </span>
+            </td>
+            <td>
+                <a href="{{ url_for('vehicles.edit_vehicle', vehicle_id=v.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <i class="bi bi-truck fs-1"></i>
+    <p class="mt-2">Aucun véhicule enregistré.</p>
+</div>
+{% endif %}
+{% endblock %}

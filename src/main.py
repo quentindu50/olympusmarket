@@ -1,7 +1,15 @@
-# Main application for the multi-vendor marketplace
+# AmbuTrack — Application de gestion de transport médical
+import sys
+import os
 
-def main():
-    print("Welcome to the Olympus Multi-Vendor Marketplace!")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from app import create_app
+
+app = create_app()
 
 if __name__ == '__main__':
-    main()
+    debug = os.environ.get('FLASK_DEBUG', 'true').lower() == 'true'
+    host = os.environ.get('FLASK_HOST', '127.0.0.1')
+    port = int(os.environ.get('FLASK_PORT', 5000))
+    app.run(debug=debug, host=host, port=port)

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Modifier' if transport else 'Nouveau' }} transport — AmbuTrack{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-calendar3"></i> {{ 'Modifier le transport' if transport else 'Nouveau transport' }}</h2>
+    <a href="{{ url_for('transports.list_transports') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+
+<form method="post">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Patient *</label>
+            <select name="patient_id" class="form-select" required>
+                <option value="">— Choisir un patient —</option>
+                {% for p in patients %}
+                <option value="{{ p.id }}" {{ 'selected' if transport and transport.patient_id == p.id else '' }}>{{ p.full_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Type de transport *</label>
+            <select name="transport_type" class="form-select" required>
+                <option value="taxi" {{ 'selected' if transport and transport.transport_type == 'taxi' else '' }}>Taxi</option>
+                <option value="vsl" {{ 'selected' if transport and transport.transport_type == 'vsl' else '' }}>VSL</option>
+                <option value="ambulance" {{ 'selected' if transport and transport.transport_type == 'ambulance' else '' }}>Ambulance</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Priorité</label>
+            <select name="priority" class="form-select">
+                <option value="normal" {{ 'selected' if not transport or transport.priority == 'normal' else '' }}>Normal</option>
+                <option value="urgent" {{ 'selected' if transport and transport.priority == 'urgent' else '' }}>Urgent</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Adresse de prise en charge *</label>
+            <input type="text" name="pickup_address" class="form-control" value="{{ transport.pickup_address if transport else '' }}" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Ville de prise en charge</label>
+            <input type="text" name="pickup_city" class="form-control" value="{{ transport.pickup_city if transport else '' }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Date et heure planifiées *</label>
+            <input type="datetime-local" name="scheduled_datetime" class="form-control"
+                value="{{ transport.scheduled_datetime.strftime('%Y-%m-%dT%H:%M') if transport else '' }}" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Adresse de destination *</label>
+            <input type="text" name="destination_address" class="form-control" value="{{ transport.destination_address if transport else '' }}" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Ville de destination</label>
+            <input type="text" name="destination_city" class="form-control" value="{{ transport.destination_city if transport else '' }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Heure de retour</label>
+            <input type="datetime-local" name="return_datetime" class="form-control"
+                value="{{ transport.return_datetime.strftime('%Y-%m-%dT%H:%M') if transport and transport.return_datetime else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Chauffeur</label>
+            <select name="driver_id" class="form-select">
+                <option value="">— Non attribué —</option>
+                {% for d in drivers %}
+                <option value="{{ d.id }}" {{ 'selected' if transport and transport.driver_id == d.id else '' }}>{{ d.full_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Véhicule</label>
+            <select name="vehicle_id" class="form-select">
+                <option value="">— Non attribué —</option>
+                {% for v in vehicles %}
+                <option value="{{ v.id }}" {{ 'selected' if transport and transport.vehicle_id == v.id else '' }}>{{ v.registration_plate }} ({{ v.vehicle_type|upper }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Établissement de destination</label>
+            <select name="destination_establishment_id" class="form-select">
+                <option value="">— Aucun —</option>
+                {% for e in establishments %}
+                <option value="{{ e.id }}" {{ 'selected' if transport and transport.destination_establishment_id == e.id else '' }}>{{ e.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Motif</label>
+            <input type="text" name="reason" class="form-control" value="{{ transport.reason if transport else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Distance (km)</label>
+            <input type="number" step="0.1" name="distance_km" class="form-control" value="{{ transport.distance_km if transport else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Récurrence</label>
+            <select name="recurrence" class="form-select">
+                <option value="">Aucune</option>
+                <option value="daily" {{ 'selected' if transport and transport.recurrence == 'daily' else '' }}>Quotidienne</option>
+                <option value="weekly" {{ 'selected' if transport and transport.recurrence == 'weekly' else '' }}>Hebdomadaire</option>
+                <option value="monthly" {{ 'selected' if transport and transport.recurrence == 'monthly' else '' }}>Mensuelle</option>
+            </select>
+        </div>
+        {% if transport %}
+        <div class="col-md-4">
+            <label class="form-label">Statut</label>
+            <select name="status" class="form-select">
+                <option value="scheduled" {{ 'selected' if transport.status == 'scheduled' else '' }}>Planifié</option>
+                <option value="in_progress" {{ 'selected' if transport.status == 'in_progress' else '' }}>En cours</option>
+                <option value="completed" {{ 'selected' if transport.status == 'completed' else '' }}>Terminé</option>
+                <option value="cancelled" {{ 'selected' if transport.status == 'cancelled' else '' }}>Annulé</option>
+            </select>
+        </div>
+        {% endif %}
+        <div class="col-12">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control" rows="2">{{ transport.notes if transport else '' }}</textarea>
+        </div>
+    </div>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Enregistrer</button>
+        <a href="{{ url_for('transports.list_transports') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+    </div>
+</form>
+{% endblock %}
