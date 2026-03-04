@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Modifier' if driver else 'Nouveau' }} chauffeur — AmbuTrack{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-badge"></i> {{ 'Modifier le chauffeur' if driver else 'Nouveau chauffeur' }}</h2>
+    <a href="{{ url_for('drivers.list_drivers') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+
+<form method="post">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Prénom *</label>
+            <input type="text" name="first_name" class="form-control" value="{{ driver.first_name if driver else '' }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Nom *</label>
+            <input type="text" name="last_name" class="form-control" value="{{ driver.last_name if driver else '' }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Téléphone *</label>
+            <input type="tel" name="phone" class="form-control" value="{{ driver.phone if driver else '' }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" value="{{ driver.email if driver else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">N° Permis de conduire</label>
+            <input type="text" name="license_number" class="form-control" value="{{ driver.license_number if driver else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Expiration permis</label>
+            <input type="date" name="license_expiry" class="form-control" value="{{ driver.license_expiry.isoformat() if driver and driver.license_expiry else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">N° Carte VSL</label>
+            <input type="text" name="vsl_card_number" class="form-control" value="{{ driver.vsl_card_number if driver else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Expiration carte VSL</label>
+            <input type="date" name="vsl_card_expiry" class="form-control" value="{{ driver.vsl_card_expiry.isoformat() if driver and driver.vsl_card_expiry else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">N° Carte Ambulance</label>
+            <input type="text" name="ambulance_card_number" class="form-control" value="{{ driver.ambulance_card_number if driver else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Expiration carte Ambulance</label>
+            <input type="date" name="ambulance_card_expiry" class="form-control" value="{{ driver.ambulance_card_expiry.isoformat() if driver and driver.ambulance_card_expiry else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Type de contrat</label>
+            <select name="contract_type" class="form-select">
+                <option value="">— Choisir —</option>
+                <option value="CDI" {{ 'selected' if driver and driver.contract_type == 'CDI' else '' }}>CDI</option>
+                <option value="CDD" {{ 'selected' if driver and driver.contract_type == 'CDD' else '' }}>CDD</option>
+                <option value="interim" {{ 'selected' if driver and driver.contract_type == 'interim' else '' }}>Intérim</option>
+                <option value="freelance" {{ 'selected' if driver and driver.contract_type == 'freelance' else '' }}>Indépendant</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Date d'embauche</label>
+            <input type="date" name="hire_date" class="form-control" value="{{ driver.hire_date.isoformat() if driver and driver.hire_date else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Statut</label>
+            <select name="status" class="form-select">
+                <option value="active" {{ 'selected' if not driver or driver.status == 'active' else '' }}>Actif</option>
+                <option value="inactive" {{ 'selected' if driver and driver.status == 'inactive' else '' }}>Inactif</option>
+                <option value="on_leave" {{ 'selected' if driver and driver.status == 'on_leave' else '' }}>En congé</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control" rows="2">{{ driver.notes if driver else '' }}</textarea>
+        </div>
+    </div>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Enregistrer</button>
+        <a href="{{ url_for('drivers.list_drivers') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+    </div>
+</form>
+{% endblock %}

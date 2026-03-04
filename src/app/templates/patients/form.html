@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Modifier' if patient else 'Nouveau' }} patient — AmbuTrack{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-heart"></i> {{ 'Modifier le patient' if patient else 'Nouveau patient' }}</h2>
+    <a href="{{ url_for('patients.list_patients') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
+</div>
+
+<form method="post">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Prénom *</label>
+            <input type="text" name="first_name" class="form-control" value="{{ patient.first_name if patient else '' }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Nom *</label>
+            <input type="text" name="last_name" class="form-control" value="{{ patient.last_name if patient else '' }}" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Date de naissance</label>
+            <input type="date" name="date_of_birth" class="form-control" value="{{ patient.date_of_birth.isoformat() if patient and patient.date_of_birth else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">N° Sécurité Sociale</label>
+            <input type="text" name="social_security_number" class="form-control" value="{{ patient.social_security_number if patient else '' }}" maxlength="15">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Téléphone</label>
+            <input type="tel" name="phone" class="form-control" value="{{ patient.phone if patient else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" value="{{ patient.email if patient else '' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Adresse</label>
+            <input type="text" name="address" class="form-control" value="{{ patient.address if patient else '' }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Ville</label>
+            <input type="text" name="city" class="form-control" value="{{ patient.city if patient else '' }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Code postal</label>
+            <input type="text" name="postal_code" class="form-control" value="{{ patient.postal_code if patient else '' }}" maxlength="10">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Mutuelle</label>
+            <input type="text" name="mutual_insurance" class="form-control" value="{{ patient.mutual_insurance if patient else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Médecin prescripteur</label>
+            <input type="text" name="prescribing_doctor" class="form-control" value="{{ patient.prescribing_doctor if patient else '' }}">
+        </div>
+        <div class="col-md-4">
+            <div class="form-check mt-4">
+                <input type="checkbox" name="ald" class="form-check-input" id="ald" {{ 'checked' if patient and patient.ald else '' }}>
+                <label class="form-check-label" for="ald">Affection Longue Durée (ALD)</label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Allergies</label>
+            <textarea name="allergies" class="form-control" rows="2">{{ patient.allergies if patient else '' }}</textarea>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control" rows="2">{{ patient.notes if patient else '' }}</textarea>
+        </div>
+    </div>
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Enregistrer</button>
+        <a href="{{ url_for('patients.list_patients') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+    </div>
+</form>
+{% endblock %}
