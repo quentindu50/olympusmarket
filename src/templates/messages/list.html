@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}- Messages{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Messages</h4>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-pencil-square me-2 text-primary"></i>Nouveau message</div>
+      <div class="card-body">
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Expéditeur <span class="text-danger">*</span></label>
+            <input type="text" name="sender_name" class="form-control" required placeholder="Votre nom">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Message <span class="text-danger">*</span></label>
+            <textarea name="content" class="form-control" rows="4" required placeholder="Votre message…"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Transport associé</label>
+            <select name="transport_id" class="form-select">
+              <option value="">— Aucun —</option>
+              {% for t in transports %}
+              <option value="{{ t.id }}">#{{ t.id }} — {{ t.patient.full_name if t.patient else '?' }} — {{ t.scheduled_at.strftime('%d/%m/%Y') }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3 form-check">
+            <input class="form-check-input" type="checkbox" name="urgent" id="urgent">
+            <label class="form-check-label text-danger fw-semibold" for="urgent"><i class="bi bi-exclamation-triangle me-1"></i>Urgent</label>
+          </div>
+          <button type="submit" class="btn btn-primary w-100"><i class="bi bi-send me-1"></i>Envoyer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-inbox me-2 text-primary"></i>Tous les messages</div>
+      <div class="list-group list-group-flush" style="max-height:70vh;overflow-y:auto">
+        {% for m in messages %}
+        <div class="list-group-item {% if m.urgent %}border-start border-danger border-3{% endif %}">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="fw-semibold">{{ m.sender_name }}</span>
+              {% if m.urgent %}<span class="badge bg-danger ms-2"><i class="bi bi-exclamation-triangle"></i> Urgent</span>{% endif %}
+              {% if m.transport %}
+                <span class="badge bg-secondary ms-1">Transport #{{ m.transport_id }}</span>
+              {% endif %}
+            </div>
+            <small class="text-muted">{{ m.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+          </div>
+          <div class="mt-1">{{ m.content }}</div>
+        </div>
+        {% else %}
+        <div class="list-group-item text-muted text-center py-4">Aucun message</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

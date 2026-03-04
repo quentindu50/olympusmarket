@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}- {{ patient.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-person-heart me-2"></i>{{ patient.full_name }}</h4>
+  <div>
+    <a href="{{ url_for('patients.edit', patient_id=patient.id) }}" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i>Modifier</a>
+    <a href="{{ url_for('patients.list') }}" class="btn btn-outline-secondary ms-2"><i class="bi bi-arrow-left me-1"></i>Retour</a>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-info-circle me-2"></i>Informations</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-5">N° SS</dt><dd class="col-sm-7">{{ patient.social_security_number or '—' }}</dd>
+          <dt class="col-sm-5">ALD</dt><dd class="col-sm-7">{% if patient.ald %}<span class="badge bg-warning text-dark">Oui</span>{% else %}Non{% endif %}</dd>
+          <dt class="col-sm-5">Mutuelle</dt><dd class="col-sm-7">{{ patient.mutual_insurance or '—' }}</dd>
+          <dt class="col-sm-5">Téléphone</dt><dd class="col-sm-7">{{ patient.phone or '—' }}</dd>
+          <dt class="col-sm-5">Adresse</dt><dd class="col-sm-7">{{ patient.address or '—' }}</dd>
+          <dt class="col-sm-5">Médecin</dt><dd class="col-sm-7">{{ patient.doctor_name or '—' }}</dd>
+          <dt class="col-sm-5">Tél. médecin</dt><dd class="col-sm-7">{{ patient.doctor_phone or '—' }}</dd>
+        </dl>
+        {% if patient.notes %}
+        <hr>
+        <p class="small text-muted mb-0">{{ patient.notes }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-ambulance me-2"></i>Historique des transports</span>
+        <a href="{{ url_for('transports.create') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus"></i> Nouveau transport</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr><th>Date</th><th>Type</th><th>Destination</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+              {% for t in transports %}
+              <tr>
+                <td>{{ t.scheduled_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                <td><span class="badge bg-secondary text-uppercase">{{ t.transport_type }}</span></td>
+                <td>{{ t.destination }}</td>
+                <td>
+                  {% if t.status == 'pending' %}<span class="badge bg-warning text-dark">En attente</span>
+                  {% elif t.status == 'assigned' %}<span class="badge bg-info">Assigné</span>
+                  {% elif t.status == 'in_progress' %}<span class="badge bg-primary">En cours</span>
+                  {% elif t.status == 'completed' %}<span class="badge bg-success">Terminé</span>
+                  {% elif t.status == 'cancelled' %}<span class="badge bg-danger">Annulé</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr><td colspan="4" class="text-center text-muted py-3">Aucun transport</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

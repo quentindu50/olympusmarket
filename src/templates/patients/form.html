@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}- {{ 'Modifier' if patient else 'Nouveau' }} patient{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-person-heart me-2"></i>{{ 'Modifier le patient' if patient else 'Nouveau patient' }}</h4>
+  <a href="{{ url_for('patients.list') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Retour</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Prénom <span class="text-danger">*</span></label>
+          <input type="text" name="first_name" class="form-control" required value="{{ patient.first_name if patient else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Nom <span class="text-danger">*</span></label>
+          <input type="text" name="last_name" class="form-control" required value="{{ patient.last_name if patient else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Numéro de sécurité sociale</label>
+          <input type="text" name="social_security_number" class="form-control" value="{{ patient.social_security_number if patient else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Mutuelle</label>
+          <input type="text" name="mutual_insurance" class="form-control" value="{{ patient.mutual_insurance if patient else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Téléphone</label>
+          <input type="tel" name="phone" class="form-control" value="{{ patient.phone if patient else '' }}">
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="ald" id="ald" {% if patient and patient.ald %}checked{% endif %}>
+            <label class="form-check-label fw-semibold" for="ald">Affection Longue Durée (ALD)</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Adresse</label>
+          <input type="text" name="address" class="form-control" value="{{ patient.address if patient else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Médecin traitant</label>
+          <input type="text" name="doctor_name" class="form-control" value="{{ patient.doctor_name if patient else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Téléphone médecin</label>
+          <input type="tel" name="doctor_phone" class="form-control" value="{{ patient.doctor_phone if patient else '' }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Notes</label>
+          <textarea name="notes" class="form-control" rows="3">{{ patient.notes if patient else '' }}</textarea>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button>
+          <a href="{{ url_for('patients.list') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

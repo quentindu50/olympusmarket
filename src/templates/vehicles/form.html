@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}- {{ 'Modifier' if vehicle else 'Nouveau' }} véhicule{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-car-front me-2"></i>{{ 'Modifier le véhicule' if vehicle else 'Nouveau véhicule' }}</h4>
+  <a href="{{ url_for('vehicles.list') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Retour</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Immatriculation <span class="text-danger">*</span></label>
+          <input type="text" name="registration" class="form-control" required value="{{ vehicle.registration if vehicle else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Type <span class="text-danger">*</span></label>
+          <select name="vehicle_type" class="form-select" required>
+            <option value="">— Choisir —</option>
+            <option value="vsl" {% if vehicle and vehicle.vehicle_type == 'vsl' %}selected{% endif %}>VSL</option>
+            <option value="ambulance" {% if vehicle and vehicle.vehicle_type == 'ambulance' %}selected{% endif %}>Ambulance</option>
+            <option value="taxi" {% if vehicle and vehicle.vehicle_type == 'taxi' %}selected{% endif %}>Taxi médical</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Statut</label>
+          <select name="status" class="form-select">
+            <option value="available" {% if vehicle and vehicle.status == 'available' %}selected{% endif %}>Disponible</option>
+            <option value="unavailable" {% if vehicle and vehicle.status == 'unavailable' %}selected{% endif %}>Indisponible</option>
+            <option value="maintenance" {% if vehicle and vehicle.status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Marque</label>
+          <input type="text" name="brand" class="form-control" value="{{ vehicle.brand if vehicle else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Modèle</label>
+          <input type="text" name="model" class="form-control" value="{{ vehicle.model if vehicle else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Année</label>
+          <input type="number" name="year" class="form-control" min="1990" max="2100" value="{{ vehicle.year if vehicle else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Expiration assurance</label>
+          <input type="date" name="insurance_expiry" class="form-control" value="{{ vehicle.insurance_expiry.isoformat() if vehicle and vehicle.insurance_expiry else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Expiration contrôle technique</label>
+          <input type="date" name="technical_control_expiry" class="form-control" value="{{ vehicle.technical_control_expiry.isoformat() if vehicle and vehicle.technical_control_expiry else '' }}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Kilométrage</label>
+          <input type="number" name="mileage" class="form-control" min="0" value="{{ vehicle.mileage if vehicle else 0 }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Notes</label>
+          <textarea name="notes" class="form-control" rows="3">{{ vehicle.notes if vehicle else '' }}</textarea>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button>
+          <a href="{{ url_for('vehicles.list') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}- Facturation{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-receipt me-2"></i>Facturation</h4>
+  <a href="{{ url_for('billing.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Nouvelle facture</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm text-center py-3">
+      <div class="fs-3 fw-bold text-primary">{{ "%.2f"|format(total) }} €</div>
+      <div class="text-muted small">Total facturé</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm text-center py-3">
+      <div class="fs-3 fw-bold text-success">{{ "%.2f"|format(total_paid) }} €</div>
+      <div class="text-muted small">Total encaissé</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm text-center py-3">
+      <div class="fs-3 fw-bold text-danger">{{ "%.2f"|format(total_unpaid) }} €</div>
+      <div class="text-muted small">Reste à encaisser</div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Transport</th>
+            <th>Montant</th>
+            <th>Tiers payant</th>
+            <th>CPAM transmis</th>
+            <th>Payé</th>
+            <th>Date paiement</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in records %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>
+              {% if r.transport and r.transport.patient %}
+                {{ r.transport.patient.full_name }} — {{ r.transport.scheduled_at.strftime('%d/%m/%Y') }}
+              {% else %}—{% endif %}
+            </td>
+            <td class="fw-semibold">{{ "%.2f"|format(r.amount) }} €</td>
+            <td>{% if r.tiers_payant %}<span class="badge bg-info">Oui</span>{% else %}—{% endif %}</td>
+            <td>{% if r.cpam_transmitted %}<span class="badge bg-success">Oui</span>{% else %}<span class="badge bg-secondary">Non</span>{% endif %}</td>
+            <td>{% if r.paid %}<span class="badge bg-success">Payé</span>{% else %}<span class="badge bg-warning text-dark">En attente</span>{% endif %}</td>
+            <td>{{ r.payment_date.strftime('%d/%m/%Y') if r.payment_date else '—' }}</td>
+            <td class="text-end">
+              {% if not r.paid %}
+              <form method="post" action="{{ url_for('billing.mark_paid', billing_id=r.id) }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-success"><i class="bi bi-check-circle"></i></button>
+              </form>
+              {% endif %}
+              <a href="{{ url_for('billing.edit', billing_id=r.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="text-center text-muted py-3">Aucune facturation</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

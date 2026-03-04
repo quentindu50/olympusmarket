@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}- Transports{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-ambulance me-2"></i>Transports</h4>
+  <a href="{{ url_for('transports.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Nouveau transport</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <form class="row g-2" method="get">
+      <div class="col-md-3">
+        <input type="date" name="date" class="form-control" placeholder="Date" value="{{ date_filter }}">
+      </div>
+      <div class="col-md-3">
+        <select name="status" class="form-select">
+          <option value="">— Tous les statuts —</option>
+          <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>En attente</option>
+          <option value="assigned" {% if status_filter == 'assigned' %}selected{% endif %}>Assigné</option>
+          <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>En cours</option>
+          <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Terminé</option>
+          <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Annulé</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="type" class="form-select">
+          <option value="">— Tous les types —</option>
+          <option value="vsl" {% if type_filter == 'vsl' %}selected{% endif %}>VSL</option>
+          <option value="ambulance" {% if type_filter == 'ambulance' %}selected{% endif %}>Ambulance</option>
+          <option value="taxi" {% if type_filter == 'taxi' %}selected{% endif %}>Taxi médical</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-funnel"></i> Filtrer</button>
+        <a href="{{ url_for('transports.list') }}" class="btn btn-outline-secondary">Réinitialiser</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Patient</th>
+            <th>Type</th>
+            <th>Départ</th>
+            <th>Destination</th>
+            <th>Date/Heure</th>
+            <th>Chauffeur</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in transports %}
+          <tr>
+            <td>{{ t.patient.full_name if t.patient else '—' }}</td>
+            <td><span class="badge bg-secondary text-uppercase">{{ t.transport_type }}</span></td>
+            <td class="text-truncate" style="max-width:120px">{{ t.pickup_address }}</td>
+            <td class="text-truncate" style="max-width:120px">{{ t.destination }}</td>
+            <td>{{ t.scheduled_at.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>{{ t.driver.full_name if t.driver else '<span class="text-muted">Non assigné</span>' | safe }}</td>
+            <td>
+              {% if t.status == 'pending' %}<span class="badge bg-warning text-dark">En attente</span>
+              {% elif t.status == 'assigned' %}<span class="badge bg-info">Assigné</span>
+              {% elif t.status == 'in_progress' %}<span class="badge bg-primary">En cours</span>
+              {% elif t.status == 'completed' %}<span class="badge bg-success">Terminé</span>
+              {% elif t.status == 'cancelled' %}<span class="badge bg-danger">Annulé</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('transports.edit', transport_id=t.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{{ url_for('transports.delete', transport_id=t.id) }}" class="d-inline" onsubmit="return confirm('Supprimer ce transport ?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="text-center text-muted py-3">Aucun transport trouvé</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

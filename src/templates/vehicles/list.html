@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}- Véhicules{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-car-front me-2"></i>Véhicules</h4>
+  <a href="{{ url_for('vehicles.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Nouveau véhicule</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Immatriculation</th>
+            <th>Type</th>
+            <th>Marque / Modèle</th>
+            <th>Assurance</th>
+            <th>Contrôle technique</th>
+            <th>Km</th>
+            <th>Statut</th>
+            <th>Alertes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in vehicles %}
+          <tr>
+            <td class="fw-semibold">{{ v.registration }}</td>
+            <td><span class="badge bg-secondary text-uppercase">{{ v.vehicle_type }}</span></td>
+            <td>{{ (v.brand or '') ~ ' ' ~ (v.model or '') }}</td>
+            <td>{{ v.insurance_expiry.strftime('%d/%m/%Y') if v.insurance_expiry else '—' }}</td>
+            <td>{{ v.technical_control_expiry.strftime('%d/%m/%Y') if v.technical_control_expiry else '—' }}</td>
+            <td>{{ v.mileage or 0 }} km</td>
+            <td>
+              {% if v.status == 'available' %}<span class="badge bg-success">Disponible</span>
+              {% elif v.status == 'unavailable' %}<span class="badge bg-secondary">Indisponible</span>
+              {% elif v.status == 'maintenance' %}<span class="badge bg-warning text-dark">Maintenance</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if v.id in warnings %}
+                {% for w in warnings[v.id] %}
+                  <span class="badge bg-danger mb-1 d-block">{{ w }}</span>
+                {% endfor %}
+              {% else %}—{% endif %}
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('vehicles.edit', vehicle_id=v.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{{ url_for('vehicles.delete', vehicle_id=v.id) }}" class="d-inline" onsubmit="return confirm('Supprimer ce véhicule ?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="9" class="text-center text-muted py-3">Aucun véhicule</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

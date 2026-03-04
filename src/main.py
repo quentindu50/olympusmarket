@@ -1,7 +1,6 @@
-# Main application for the multi-vendor marketplace
+from app import create_app
 
-def main():
-    print("Welcome to the Olympus Multi-Vendor Marketplace!")
+app = create_app()
 
 if __name__ == '__main__':
-    main()
+    app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
