@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Messagerie - OlympusTransport{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><i class="bi bi-chat-dots"></i> Messagerie
+    {% if unread_count > 0 %}
+    <span class="badge bg-danger ms-2">{{ unread_count }}</span>
+    {% endif %}
+  </h2>
+  <a href="{{ url_for('messaging.new') }}" class="btn btn-primary">
+    <i class="bi bi-plus-lg"></i> Nouveau message
+  </a>
+</div>
+<div class="card">
+  <div class="card-body p-0">
+    <ul class="list-group list-group-flush">
+      {% for msg in messages %}
+      <li class="list-group-item {% if not msg.is_read %}list-group-item-light fw-semibold{% endif %}">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <span class="text-muted small">
+              {{ msg.sent_at.strftime('%d/%m/%Y %H:%M') }} —
+              {% if msg.sender %}{{ msg.sender.last_name }}{% else %}Système{% endif %}
+              {% if msg.mission_id %} — Mission #{{ msg.mission_id }}{% endif %}
+            </span>
+            <div>{{ msg.content }}</div>
+          </div>
+          {% if not msg.is_read %}
+          <form method="post" action="{{ url_for('messaging.mark_read', message_id=msg.id) }}" class="ms-2">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Lu</button>
+          </form>
+          {% endif %}
+        </div>
+      </li>
+      {% else %}
+      <li class="list-group-item text-center text-muted py-3">Aucun message</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

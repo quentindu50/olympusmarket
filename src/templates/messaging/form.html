@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Nouveau message - OlympusTransport{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-chat-dots"></i> Nouveau message</h2>
+<div class="card">
+  <div class="card-body">
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Chauffeur émetteur</label>
+          <select name="sender_id" class="form-select">
+            <option value="">— Système —</option>
+            {% for d in drivers %}
+            <option value="{{ d.id }}">{{ d.last_name }} {{ d.first_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Mission liée</label>
+          <select name="mission_id" class="form-select">
+            <option value="">— Aucune —</option>
+            {% for m in missions %}
+            <option value="{{ m.id }}">#{{ m.id }} — {{ m.patient.last_name }} — {{ m.scheduled_at.strftime('%d/%m/%Y') }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Message *</label>
+          <textarea name="content" class="form-control" rows="4" required></textarea>
+        </div>
+        <div class="col-12">
+          <a href="{{ url_for('messaging.index') }}" class="btn btn-secondary me-2">Annuler</a>
+          <button type="submit" class="btn btn-primary">Envoyer</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

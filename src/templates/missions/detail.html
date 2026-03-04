@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Mission #{{ mission.id }} - OlympusTransport{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><i class="bi bi-map"></i> Mission #{{ mission.id }}</h2>
+  <a href="{{ url_for('missions.index') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Retour
+  </a>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-header">Informations de transport</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Patient</dt>
+          <dd class="col-sm-8">
+            <a href="{{ url_for('patients.detail', patient_id=mission.patient.id) }}">
+              {{ mission.patient.last_name }} {{ mission.patient.first_name }}
+            </a>
+          </dd>
+          <dt class="col-sm-4">Chauffeur</dt>
+          <dd class="col-sm-8">
+            {% if mission.driver %}
+              <a href="{{ url_for('drivers.detail', driver_id=mission.driver.id) }}">
+                {{ mission.driver.last_name }} {{ mission.driver.first_name }}
+              </a>
+            {% else %}—{% endif %}
+          </dd>
+          <dt class="col-sm-4">Véhicule</dt>
+          <dd class="col-sm-8">
+            {% if mission.vehicle %}{{ mission.vehicle.registration }} ({{ mission.vehicle.vehicle_type }})
+            {% else %}—{% endif %}
+          </dd>
+          <dt class="col-sm-4">Départ</dt>
+          <dd class="col-sm-8">{{ mission.pickup_address }}</dd>
+          <dt class="col-sm-4">Arrivée</dt>
+          <dd class="col-sm-8">{{ mission.dropoff_address }}</dd>
+          <dt class="col-sm-4">Planifiée</dt>
+          <dd class="col-sm-8">{{ mission.scheduled_at.strftime('%d/%m/%Y à %H:%M') }}</dd>
+          {% if mission.started_at %}
+          <dt class="col-sm-4">Démarrée</dt>
+          <dd class="col-sm-8">{{ mission.started_at.strftime('%d/%m/%Y à %H:%M') }}</dd>
+          {% endif %}
+          {% if mission.completed_at %}
+          <dt class="col-sm-4">Terminée</dt>
+          <dd class="col-sm-8">{{ mission.completed_at.strftime('%d/%m/%Y à %H:%M') }}</dd>
+          {% endif %}
+          <dt class="col-sm-4">Type</dt>
+          <dd class="col-sm-8">{{ mission.mission_type or '—' }}</dd>
+          <dt class="col-sm-4">Distance</dt>
+          <dd class="col-sm-8">{{ mission.distance_km ~ ' km' if mission.distance_km else '—' }}</dd>
+          <dt class="col-sm-4">Délai dépôt auto</dt>
+          <dd class="col-sm-8">{{ mission.auto_dropoff_delay }} min</dd>
+          {% if mission.prescriber %}
+          <dt class="col-sm-4">Prescripteur</dt>
+          <dd class="col-sm-8">Dr. {{ mission.prescriber.last_name }}</dd>
+          {% endif %}
+          {% if mission.notes %}
+          <dt class="col-sm-4">Notes</dt>
+          <dd class="col-sm-8">{{ mission.notes }}</dd>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+
+    <!-- Incidents -->
+    {% if mission.incidents %}
+    <div class="card mb-3">
+      <div class="card-header">Incidents</div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          {% for inc in mission.incidents %}
+          <li class="list-group-item">
+            <span class="badge bg-{{ 'danger' if inc.severity == 'high' else ('warning' if inc.severity == 'medium' else 'secondary') }}">{{ inc.severity }}</span>
+            {{ inc.description }}
+            {% if inc.resolved %}<span class="badge bg-success ms-1">résolu</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-4">
+    <div class="card mb-3">
+      <div class="card-header">Statut actuel</div>
+      <div class="card-body text-center">
+        {% set badge = {'pending': 'warning', 'assigned': 'info', 'in_progress': 'primary', 'completed': 'success', 'cancelled': 'secondary'} %}
+        <span class="badge bg-{{ badge.get(mission.status, 'secondary') }} fs-5 mb-3">{{ mission.status }}</span>
+        <form method="post" action="{{ url_for('missions.update_status', mission_id=mission.id) }}">
+          <select name="status" class="form-select mb-2">
+            {% for s in ['pending', 'assigned', 'in_progress', 'completed', 'cancelled'] %}
+            <option value="{{ s }}" {% if mission.status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+        </form>
+      </div>
+    </div>
+
+    {% if not mission.invoice %}
+    <div class="card">
+      <div class="card-body text-center">
+        <a href="{{ url_for('billing.new', mission_id=mission.id) }}" class="btn btn-outline-primary">
+          <i class="bi bi-receipt"></i> Créer une facture
+        </a>
+      </div>
+    </div>
+    {% else %}
+    <div class="card">
+      <div class="card-header">Facture</div>
+      <div class="card-body">
+        <a href="{{ url_for('billing.detail', invoice_id=mission.invoice.id) }}">
+          {{ mission.invoice.invoice_number }}
+        </a> — {{ mission.invoice.amount_total }}€
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

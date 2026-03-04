@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Nouveau chauffeur - OlympusTransport{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-person-badge"></i> Nouveau chauffeur</h2>
+<div class="card">
+  <div class="card-body">
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nom *</label>
+          <input type="text" name="last_name" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Prénom *</label>
+          <input type="text" name="first_name" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">N° Permis *</label>
+          <input type="text" name="license_number" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Certificat DEA/CCA</label>
+          <input type="text" name="dea_certificate" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Téléphone</label>
+          <input type="tel" name="phone" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control">
+        </div>
+        <div class="col-12">
+          <a href="{{ url_for('drivers.index') }}" class="btn btn-secondary me-2">Annuler</a>
+          <button type="submit" class="btn btn-primary">Ajouter le chauffeur</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
