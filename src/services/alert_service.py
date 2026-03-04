@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Dict, List, Optional
 
@@ -43,7 +43,7 @@ class AlertService:
             id=str(uuid.uuid4()),
             type=alert_type,
             message=message,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
             mission_id=mission_id,
             vehicle_id=vehicle_id,
             driver_id=driver_id,
@@ -54,7 +54,7 @@ class AlertService:
     def resolve_alert(self, alert_id: str) -> Alert:
         alert = self.alerts[alert_id]
         alert.resolved = True
-        alert.resolved_at = datetime.utcnow()
+        alert.resolved_at = datetime.now(timezone.utc)
         return alert
 
     def get_open_alerts(self) -> List[Alert]:

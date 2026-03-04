@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytest
 
 from src.models.vehicle import VehicleType
@@ -81,7 +81,7 @@ def test_get_missions_for_driver():
     # Simulate an old completed mission
     m2 = svc.create_mission("p2", "d1", "v2", VehicleType.VSL, t, "Clinic", "reason", "pr1")
     # Manually push all its events to 25h ago and complete it
-    old_time = datetime.utcnow() - timedelta(hours=25)
+    old_time = datetime.now(timezone.utc) - timedelta(hours=25)
     for e in m2.status_events:
         e.timestamp = old_time
     m2.status = MissionStatus.COMPLETED

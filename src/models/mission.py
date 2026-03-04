@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import List, Optional
 
@@ -40,7 +40,7 @@ class Mission:
     prescriber_id: str
     status: MissionStatus
     status_events: List[MissionStatusEvent] = field(default_factory=list)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     auto_drop_delay_minutes: int = 20
     auto_drop_triggered: bool = False
     transport_document_present: bool = False

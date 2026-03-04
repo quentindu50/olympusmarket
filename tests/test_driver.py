@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from src.models.driver import Driver
 from src.models.vehicle import VehicleType
@@ -41,14 +41,14 @@ def test_message_acknowledgement():
         sender_id="d1",
         recipient_id="reg1",
         content="En route",
-        sent_at=datetime.utcnow(),
+        sent_at=datetime.now(timezone.utc),
     )
     assert msg.acknowledged is False
     assert msg.acknowledged_at is None
 
     # Acknowledge the message
     msg.acknowledged = True
-    msg.acknowledged_at = datetime.utcnow()
+    msg.acknowledged_at = datetime.now(timezone.utc)
 
     assert msg.acknowledged is True
     assert msg.acknowledged_at is not None

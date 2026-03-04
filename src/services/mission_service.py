@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 
 from ..models.mission import Mission, MissionStatus, MissionStatusEvent
@@ -35,7 +35,7 @@ class MissionService:
         auto_drop_delay_minutes: int = 20,
     ) -> Mission:
         mission_id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         initial_event = MissionStatusEvent(
             status=MissionStatus.PENDING,
             timestamp=now,
@@ -81,7 +81,7 @@ class MissionService:
 
         event = MissionStatusEvent(
             status=new_status,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             driver_id=driver_id,
             vehicle_id=vehicle_id,
             gps_latitude=gps_lat,
@@ -112,7 +112,7 @@ class MissionService:
         if arrived_at is None:
             return False
 
-        now = current_time or datetime.utcnow()
+        now = current_time or datetime.now(timezone.utc)
         elapsed = (now - arrived_at).total_seconds() / 60
         if elapsed <= mission.auto_drop_delay_minutes:
             return False
@@ -131,7 +131,7 @@ class MissionService:
         return True
 
     def get_missions_for_driver(self, driver_id: str) -> List[Mission]:
-        cutoff = datetime.utcnow() - timedelta(hours=24)
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
         result = []
         for mission in self.missions.values():
             if mission.driver_id != driver_id:

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 
 from ..models.mission import Mission, MissionStatus
@@ -12,11 +12,11 @@ class RegulationService:
 
     def get_dashboard(self, date: Optional[datetime] = None) -> Dict:
         if date is None:
-            date = datetime.utcnow()
+            date = datetime.now(timezone.utc)
 
         day_start = date.replace(hour=0, minute=0, second=0, microsecond=0)
         day_end = day_start + timedelta(days=1)
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
 
         missions_today = [
             m for m in self.mission_service.missions.values()
@@ -92,7 +92,7 @@ class RegulationService:
         last_event = mission.status_events[-1] if mission.status_events else None
         elapsed = None
         if last_event:
-            elapsed = (datetime.utcnow() - last_event.timestamp).total_seconds()
+            elapsed = (datetime.now(timezone.utc) - last_event.timestamp).total_seconds()
 
         last_gps = None
         if last_event and last_event.gps_latitude is not None:

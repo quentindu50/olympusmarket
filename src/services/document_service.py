@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 
 from ..models.document import Document, DocumentType
@@ -19,7 +19,7 @@ class DocumentService:
         doc = Document(
             id=str(uuid.uuid4()),
             type=doc_type,
-            uploaded_at=datetime.utcnow(),
+            uploaded_at=datetime.now(timezone.utc),
             patient_id=patient_id,
             mission_id=mission_id,
             content=content,

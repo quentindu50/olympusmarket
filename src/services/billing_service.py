@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 
 from ..models.mission import Mission, MissionStatus
@@ -80,7 +80,7 @@ class BillingService:
             has_night_surcharge=has_night,
             has_sunday_surcharge=has_sunday,
             tiers_payant=tiers_payant,
-            generated_at=datetime.utcnow(),
+            generated_at=datetime.now(timezone.utc),
             status="draft",
         )
         self.invoices[invoice.id] = invoice
