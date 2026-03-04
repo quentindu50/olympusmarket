@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Facturation - OlympusTransport{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><i class="bi bi-receipt"></i> Facturation</h2>
+</div>
+<div class="card mb-3">
+  <div class="card-body">
+    <form class="row g-2 align-items-center">
+      <div class="col-auto"><label class="col-form-label">Statut :</label></div>
+      <div class="col-auto">
+        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Tous</option>
+          {% for s in ['draft', 'sent', 'paid', 'rejected'] %}
+          <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>N° Facture</th><th>Mission</th><th>Base (€)</th><th>Majorations (€)</th><th>Total (€)</th><th>Statut</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td><a href="{{ url_for('billing.detail', invoice_id=inv.id) }}">{{ inv.invoice_number }}</a></td>
+          <td><a href="{{ url_for('missions.detail', mission_id=inv.mission_id) }}">#{{ inv.mission_id }}</a></td>
+          <td>{{ "%.2f"|format(inv.amount_base) }}</td>
+          <td>{{ "%.2f"|format(inv.amount_surcharges) }}</td>
+          <td><strong>{{ "%.2f"|format(inv.amount_total) }}</strong></td>
+          <td>
+            {% set badge = {'draft': 'secondary', 'sent': 'info', 'paid': 'success', 'rejected': 'danger'} %}
+            <span class="badge bg-{{ badge.get(inv.status, 'secondary') }}">{{ inv.status }}</span>
+          </td>
+          <td>{{ inv.issued_at.strftime('%d/%m/%Y') }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-3">Aucune facture</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

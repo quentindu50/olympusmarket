@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Nouveau véhicule - OlympusTransport{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-truck"></i> Nouveau véhicule</h2>
+<div class="card">
+  <div class="card-body">
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Immatriculation *</label>
+          <input type="text" name="registration" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Type *</label>
+          <select name="vehicle_type" class="form-select" required>
+            <option value="VSL">VSL</option>
+            <option value="Ambulance">Ambulance</option>
+            <option value="SMUR">SMUR</option>
+            <option value="Taxi">Taxi médical</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Marque</label>
+          <input type="text" name="brand" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Modèle</label>
+          <input type="text" name="model" class="form-control">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Année</label>
+          <input type="number" name="year" class="form-control" min="1990" max="2030">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Capacité</label>
+          <input type="number" name="capacity" class="form-control" value="1" min="1">
+        </div>
+        <div class="col-12">
+          <a href="{{ url_for('vehicles.index') }}" class="btn btn-secondary me-2">Annuler</a>
+          <button type="submit" class="btn btn-primary">Ajouter le véhicule</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

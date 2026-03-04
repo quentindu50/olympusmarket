@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Signaler un incident - OlympusTransport{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-exclamation-triangle"></i> Signaler un incident</h2>
+<div class="card">
+  <div class="card-body">
+    <form method="post">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Chauffeur</label>
+          <select name="driver_id" class="form-select">
+            <option value="">— Aucun —</option>
+            {% for d in drivers %}
+            <option value="{{ d.id }}">{{ d.last_name }} {{ d.first_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Mission liée</label>
+          <select name="mission_id" class="form-select">
+            <option value="">— Aucune —</option>
+            {% for m in missions %}
+            <option value="{{ m.id }}">#{{ m.id }} — {{ m.patient.last_name }} — {{ m.scheduled_at.strftime('%d/%m/%Y') }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Sévérité</label>
+          <select name="severity" class="form-select">
+            <option value="low">Faible</option>
+            <option value="medium">Moyenne</option>
+            <option value="high">Haute</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description *</label>
+          <textarea name="description" class="form-control" rows="4" required></textarea>
+        </div>
+        <div class="col-12">
+          <a href="{{ url_for('admin.index') }}" class="btn btn-secondary me-2">Annuler</a>
+          <button type="submit" class="btn btn-warning">Signaler</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

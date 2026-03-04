@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ vehicle.registration }} - OlympusTransport{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><i class="bi bi-truck"></i> {{ vehicle.registration }}</h2>
+  <a href="{{ url_for('vehicles.index') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Retour
+  </a>
+</div>
+<div class="row g-3">
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-header">Informations</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-5">Type</dt>
+          <dd class="col-sm-7">{{ vehicle.vehicle_type }}</dd>
+          <dt class="col-sm-5">Marque</dt>
+          <dd class="col-sm-7">{{ vehicle.brand or '—' }}</dd>
+          <dt class="col-sm-5">Modèle</dt>
+          <dd class="col-sm-7">{{ vehicle.model or '—' }}</dd>
+          <dt class="col-sm-5">Année</dt>
+          <dd class="col-sm-7">{{ vehicle.year or '—' }}</dd>
+          <dt class="col-sm-5">Capacité</dt>
+          <dd class="col-sm-7">{{ vehicle.capacity }}</dd>
+          <dt class="col-sm-5">Disponible</dt>
+          <dd class="col-sm-7">
+            <span class="badge bg-{{ 'success' if vehicle.is_available else 'danger' }}">
+              {{ 'Oui' if vehicle.is_available else 'Non' }}
+            </span>
+          </dd>
+        </dl>
+        <form method="post" action="{{ url_for('vehicles.toggle_availability', vehicle_id=vehicle.id) }}" class="mt-3">
+          <button type="submit" class="btn btn-sm btn-outline-{{ 'danger' if vehicle.is_available else 'success' }}">
+            {{ 'Marquer indisponible' if vehicle.is_available else 'Marquer disponible' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header">Missions</div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          {% for m in vehicle.missions %}
+          <li class="list-group-item d-flex justify-content-between">
+            <a href="{{ url_for('missions.detail', mission_id=m.id) }}">#{{ m.id }} — {{ m.patient.last_name }} — {{ m.scheduled_at.strftime('%d/%m/%Y') }}</a>
+            {% set badge = {'pending': 'warning', 'assigned': 'info', 'in_progress': 'primary', 'completed': 'success', 'cancelled': 'secondary'} %}
+            <span class="badge bg-{{ badge.get(m.status, 'secondary') }}">{{ m.status }}</span>
+          </li>
+          {% else %}
+          <li class="list-group-item text-muted text-center">Aucune mission</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

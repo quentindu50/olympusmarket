@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ invoice.invoice_number }} - OlympusTransport{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><i class="bi bi-receipt"></i> Facture {{ invoice.invoice_number }}</h2>
+  <a href="{{ url_for('billing.index') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Retour
+  </a>
+</div>
+<div class="row g-3">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header">Détail</div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Mission</dt>
+          <dd class="col-sm-8"><a href="{{ url_for('missions.detail', mission_id=invoice.mission.id) }}">#{{ invoice.mission.id }}</a></dd>
+          <dt class="col-sm-4">Patient</dt>
+          <dd class="col-sm-8">{{ invoice.mission.patient.last_name }} {{ invoice.mission.patient.first_name }}</dd>
+          <dt class="col-sm-4">Montant de base</dt>
+          <dd class="col-sm-8">{{ "%.2f"|format(invoice.amount_base) }} €</dd>
+          <dt class="col-sm-4">Majorations</dt>
+          <dd class="col-sm-8">{{ "%.2f"|format(invoice.amount_surcharges) }} €</dd>
+          <dt class="col-sm-4">Total</dt>
+          <dd class="col-sm-8"><strong>{{ "%.2f"|format(invoice.amount_total) }} €</strong></dd>
+          <dt class="col-sm-4">Émise le</dt>
+          <dd class="col-sm-8">{{ invoice.issued_at.strftime('%d/%m/%Y') }}</dd>
+          {% if invoice.paid_at %}
+          <dt class="col-sm-4">Payée le</dt>
+          <dd class="col-sm-8">{{ invoice.paid_at.strftime('%d/%m/%Y') }}</dd>
+          {% endif %}
+          {% if invoice.notes %}
+          <dt class="col-sm-4">Notes</dt>
+          <dd class="col-sm-8">{{ invoice.notes }}</dd>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card">
+      <div class="card-header">Statut</div>
+      <div class="card-body text-center">
+        {% set badge = {'draft': 'secondary', 'sent': 'info', 'paid': 'success', 'rejected': 'danger'} %}
+        <span class="badge bg-{{ badge.get(invoice.status, 'secondary') }} fs-5 mb-3">{{ invoice.status }}</span>
+        <form method="post" action="{{ url_for('billing.update_status', invoice_id=invoice.id) }}">
+          <select name="status" class="form-select mb-2">
+            {% for s in ['draft', 'sent', 'paid', 'rejected'] %}
+            <option value="{{ s }}" {% if invoice.status == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
