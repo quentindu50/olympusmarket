@@ -1,11 +1,20 @@
 import os
+import logging
+import warnings
 from flask import Flask
 from extensions import db, csrf
 
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'vitaltransport-secret-key-2024')
+    secret_key = os.environ.get('SECRET_KEY')
+    if not secret_key:
+        warnings.warn(
+            "SECRET_KEY is not set. Using an insecure default — set SECRET_KEY in production.",
+            stacklevel=2,
+        )
+        secret_key = 'vitaltransport-dev-key-change-in-production'
+    app.config['SECRET_KEY'] = secret_key
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'vitaltransport.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

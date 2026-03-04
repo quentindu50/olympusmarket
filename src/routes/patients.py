@@ -10,10 +10,12 @@ def list():
     search = request.args.get('q', '')
     query = Patient.query
     if search:
+        # Escape LIKE special characters to avoid unintended pattern matching
+        escaped = search.replace('\\', '\\\\').replace('%', r'\%').replace('_', r'\_')
         query = query.filter(
-            (Patient.first_name.ilike(f'%{search}%')) |
-            (Patient.last_name.ilike(f'%{search}%')) |
-            (Patient.phone.ilike(f'%{search}%'))
+            (Patient.first_name.ilike(f'%{escaped}%', escape='\\')) |
+            (Patient.last_name.ilike(f'%{escaped}%', escape='\\')) |
+            (Patient.phone.ilike(f'%{escaped}%', escape='\\'))
         )
     patients = query.order_by(Patient.last_name).all()
     return render_template('patients/list.html', patients=patients, search=search)

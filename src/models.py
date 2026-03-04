@@ -1,5 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from extensions import db
+
+
+def _now():
+    return datetime.now(timezone.utc)
 
 
 class Patient(db.Model):
@@ -15,7 +19,7 @@ class Patient(db.Model):
     doctor_name = db.Column(db.String(100))
     doctor_phone = db.Column(db.String(20))
     notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
     transports = db.relationship('Transport', backref='patient', lazy=True)
 
     @property
@@ -35,7 +39,7 @@ class Driver(db.Model):
     ambulance_card = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(20), default='available')  # available/unavailable/on_mission
     notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
     transports = db.relationship('Transport', backref='driver', lazy=True)
 
     @property
@@ -76,7 +80,7 @@ class Transport(db.Model):
     recurrent = db.Column(db.Boolean, default=False)
     recurrence_pattern = db.Column(db.String(100))
     notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
     billing = db.relationship('Billing', backref='transport', lazy=True, uselist=False)
     messages = db.relationship('Message', backref='transport', lazy=True)
 
@@ -91,7 +95,7 @@ class Billing(db.Model):
     paid = db.Column(db.Boolean, default=False)
     payment_date = db.Column(db.Date, nullable=True)
     notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
 
 
 class Message(db.Model):
@@ -100,5 +104,5 @@ class Message(db.Model):
     sender_name = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     urgent = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=_now)
     transport_id = db.Column(db.Integer, db.ForeignKey('transports.id'), nullable=True)
