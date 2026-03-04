@@ -42,7 +42,11 @@ def check_ambulance_auto_drop(mission_id, delay_minutes=AMBULANCE_AUTO_DROP_MINU
     """
     For ambulance missions that are ON_SITE and the delay has elapsed without
     reaching DROPPED status, automatically advance to DROPPED.
+
     Returns (mission, auto_dropped) tuple.
+      - (None, False)        if mission_id does not exist
+      - (mission, False)     if conditions for auto-drop are not met
+      - (mission, True)      if auto-drop was applied
     """
     mission = Mission.query.get(mission_id)
     if mission is None:

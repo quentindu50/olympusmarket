@@ -9,9 +9,9 @@ invoices_bp = Blueprint("invoices", __name__, url_prefix="/api/invoices")
 
 
 def _generate_invoice_number():
-    """Generate a unique invoice number using timestamp + UUID to avoid race conditions."""
+    """Generate a unique invoice number using timestamp + full UUID to avoid collisions."""
     now = datetime.utcnow()
-    unique_suffix = uuid.uuid4().hex[:6].upper()
+    unique_suffix = uuid.uuid4().hex.upper()
     return f"INV-{now.year}{now.month:02d}-{unique_suffix}"
 
 

@@ -66,7 +66,7 @@ def create_mission():
     try:
         pickup_time = datetime.fromisoformat(data["scheduled_pickup_time"])
     except ValueError:
-        return jsonify({"error": "Invalid scheduled_pickup_time format"}), 400
+        return jsonify({"error": "Invalid scheduled_pickup_time format. Expected ISO 8601 (e.g. '2024-03-04T14:30:00')"}), 400
     mission = Mission(
         patient_id=data["patient_id"],
         driver_id=data.get("driver_id"),
