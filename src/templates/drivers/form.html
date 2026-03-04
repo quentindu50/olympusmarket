@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}- {{ 'Modifier' if driver else 'Nouveau' }} chauffeur{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4 class="mb-0"><i class="bi bi-person-badge me-2"></i>{{ 'Modifier le chauffeur' if driver else 'Nouveau chauffeur' }}</h4>
+  <a href="{{ url_for('drivers.list') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Retour</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Prénom <span class="text-danger">*</span></label>
+          <input type="text" name="first_name" class="form-control" required value="{{ driver.first_name if driver else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Nom <span class="text-danger">*</span></label>
+          <input type="text" name="last_name" class="form-control" required value="{{ driver.last_name if driver else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Téléphone</label>
+          <input type="tel" name="phone" class="form-control" value="{{ driver.phone if driver else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Email</label>
+          <input type="email" name="email" class="form-control" value="{{ driver.email if driver else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Numéro de permis</label>
+          <input type="text" name="license_number" class="form-control" value="{{ driver.license_number if driver else '' }}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Statut</label>
+          <select name="status" class="form-select">
+            <option value="available" {% if driver and driver.status == 'available' %}selected{% endif %}>Disponible</option>
+            <option value="unavailable" {% if driver and driver.status == 'unavailable' %}selected{% endif %}>Indisponible</option>
+            <option value="on_mission" {% if driver and driver.status == 'on_mission' %}selected{% endif %}>En mission</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" name="vsl_card" id="vsl_card" {% if driver and driver.vsl_card %}checked{% endif %}>
+            <label class="form-check-label" for="vsl_card">Carte VSL</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" name="ambulance_card" id="ambulance_card" {% if driver and driver.ambulance_card %}checked{% endif %}>
+            <label class="form-check-label" for="ambulance_card">Carte Ambulance</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold">Notes</label>
+          <textarea name="notes" class="form-control" rows="3">{{ driver.notes if driver else '' }}</textarea>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Enregistrer</button>
+          <a href="{{ url_for('drivers.list') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
